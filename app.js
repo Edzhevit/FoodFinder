@@ -2,9 +2,16 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
+var passport = require("passport");
+var LogalStrategy = require("passport-local");
+var expressSession = require("express-session");
 var Restaurant = require("./models/restaurant");
 var Comment = require("./models/comment");
+var User = require("./models/user");
 var seedDb = require("./seeds");
+var authRoutes = require("./routes/index");
+var restaurantRoutes = require("./routes/restaurants");
+var commentRoutes = require("./routes/comments");
 
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect("mongodb://localhost:27017/food_finder", {useNewUrlParser: true});
@@ -15,83 +22,25 @@ app.use(express.static(__dirname + "/public"));
 
 seedDb();
 
-app.get("/", (req, res) => {
-    res.render("landing");
+app.use(expressSession({
+    secret: "Favourite place is Sofia!",
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LogalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    next();
 });
 
-app.get("/restaurants", (req, res) => {
-    // Get all restaurants from DB
-    Restaurant.find({}, (err, allRestaurants) => {
-        if(err){
-            console.log(err);
-        } else{
-            res.render("restaurants/index", { restaurants: allRestaurants});
-        }
-    });
-});
-
-app.post("/restaurants", (req, res) => {
-    // get data from form and add to restaurants array
-    var name = req.body.name;
-    var image = req.body.image;
-    var description = req.body.description;
-    var newRestaurant = { name: name, image: image, description: description };
-    // create a new restaurant and save it to DB
-    Restaurant.create(newRestaurant, (err, newlyCreated) => {
-        if(err){
-            console.log(err);
-        } else{
-            // redirect back to restaurants
-            res.redirect("/restaurants");
-        }
-    });
-});
-
-app.get("/restaurants/new", (req, res) => {
-    res.render("restaurants/new");
-});
-
-app.get("/restaurants/:id", (req, res) => {
-    // find restaurant with provided ID
-    Restaurant.findById(req.params.id).populate("comments").exec((err, foundRestaurant) => {
-        if(err){
-            console.log(err)
-        } else{
-            // render show template with that restaurant
-            res.render("restaurants/show", {restaurant: foundRestaurant});
-        }
-    });
-  
-});
-
-app.get("/restaurants/:id/comments/new", (req, res) => {
-    Restaurant.findById(req.params.id, (err, restaurant) =>{
-        if(err){
-            console.log(err);
-        } else{
-            res.render("comments/new", {restaurant: restaurant})
-        }
-    })
-});
-
-app.post("/restaurants/:id/comments", (req, res) => {
-    Restaurant.findById(req.params.id, (err, restaurant) =>{
-        if(err){
-            console.log(err);
-            req.redirect("/restaurants")
-        } else{
-            Comment.create(req.body.comment, (err, comment) => {
-                if(err){
-                    console.log(err);
-                } else{
-                    restaurant.comments.push(comment);
-                    restaurant.save();
-                    res.redirect("/restaurants/" + restaurant.id);
-                }
-            })
-        }
-    })
-});
+app.use(authRoutes);
+app.use("/restaurants", restaurantRoutes);
+app.use("/restaurants/:d/comments", commentRoutes);
 
 app.listen("3000", () => {
     console.log("FoodFinder server has started!")
