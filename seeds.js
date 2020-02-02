@@ -29,7 +29,7 @@ async function seedDB(){
     
         for(var seed of data){
             var restaurant = await Restaurant.create(seed);
-            console.log("Restaurant created")
+            console.log("Restaurant created");
             var comment = await Comment.create(
                 {
                     text: "This place is great, but I wish there was internet",
