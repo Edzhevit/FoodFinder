@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var passport = require("passport");
 var LogalStrategy = require("passport-local");
+var methodOverride = require("method-override");
 var expressSession = require("express-session");
 var Restaurant = require("./models/restaurant");
 var Comment = require("./models/comment");
@@ -14,13 +15,15 @@ var restaurantRoutes = require("./routes/restaurants");
 var commentRoutes = require("./routes/comments");
 
 mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
 mongoose.connect("mongodb://localhost:27017/food_finder", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 
-seedDb();
+// seedDb();
 
 app.use(expressSession({
     secret: "Favourite place is Sofia!",
@@ -40,7 +43,7 @@ app.use((req, res, next) => {
 
 app.use(authRoutes);
 app.use("/restaurants", restaurantRoutes);
-app.use("/restaurants/:d/comments", commentRoutes);
+app.use("/restaurants/:id/comments", commentRoutes);
 
 app.listen("3000", () => {
     console.log("FoodFinder server has started!")
