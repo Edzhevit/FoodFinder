@@ -20,11 +20,17 @@
                     <p>
                         <em>Submitted By <%= restaurant.user.username %> </em>
                     </p>
+                    <% if (currentUser && restaurant.user.id.equals(currentUser.id)) { %>
+                        <a class="btn btn-xs btn-warning" href="/restaurants/<%=restaurant.id%>/edit">Edit</a>
+                        <form class="deleteForm" action="/restaurants/<%= restaurant.id%>?_method=DELETE" method="post">
+                            <button class="btn btn-xs btn-danger">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             </div>
             <div class="well">
                 <div class="text-right">
-                    <a class="btn btn-success" href="/restaurants/<%= restaurant.id%>/comments/new">Add New comment</a>
+                    <a class="btn btn-xs btn-success" href="/restaurants/<%= restaurant.id%>/comments/new">Add New comment</a>
                 </div>
                 <hr>
                 <% restaurant.comments.forEach((comment) => { %>
@@ -33,6 +39,14 @@
                             <strong><%= comment.author.username %></strong>
                             <span class="pull-right">10 days ago</span>
                             <p><%= comment.text %></p>
+                            <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
+                            <a class="btn btn-xs btn-warning" href="/restaurants/<%= restaurant.id%>/comments/<%= comment.id%>/edit">
+                                Edit
+                            </a>
+                            <form class="deleteForm" action="/restaurants/<%= restaurant.id%>/comments/<%= comment.id%>?_method=DELETE" method="post">
+                                <button class="btn btn-xs btn-danger">Delete</button>
+                            </form>
+                            <% } %>
                         </div>
                     </div>
                 <% }) %>
