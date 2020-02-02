@@ -1,5 +1,5 @@
 var express = require("express");
-var router = express.Router();
+var router = express.Router({mergeParams: true});
 var Restaurant = require("../models/restaurant");
 
 router.get("/", (req, res) => {
@@ -54,12 +54,55 @@ router.get("/:id", (req, res) => {
   
 });
 
+router.get("/:id/edit", checkRestaurantOwnership, (req, res) => {
+    Restaurant.findById(req.params.id, (err, foundRestaurant) => {
+        res.render("restaurants/edit", {restaurant: foundRestaurant});
+    });
+});
+
+router.put("/:id", checkRestaurantOwnership, (req, res) => {
+    Restaurant.findOneAndUpdate(req.params.id, req.body.restaurant, (err, updatedRestaurant) => {
+        if (err){
+            res.redirect("/restaurants");
+        } else {
+            res.redirect("/restaurants/" + req.params.id);
+        }
+    });
+});
+
+router.delete("/:id", checkRestaurantOwnership, (req, res) => {
+    Restaurant.findOneAndRemove(req.params.id, (err) => {
+        if(err){
+            res.redirect("/restaurants");
+        } else {
+            res.redirect("/restaurants");
+        }
+    })
+});
+
 function isLoggedIn (req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
-
     res.redirect("/login");
+}
+
+function checkRestaurantOwnership(req, res, next){
+    if (req.isAuthenticated()){
+        Restaurant.findById(req.params.id, (err, foundRestaurant) => {
+            if (err){
+                res.redirect("back");
+            } else {
+                if (foundRestaurant.user.id.equals(req.user.id)){
+                    next();
+                } else {
+                    res.redirect("back")
+                }
+            }
+        });
+    } else {
+        res.redirect("back");
+    }
 }
 
 module.exports = router;
