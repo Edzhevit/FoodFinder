@@ -7,6 +7,12 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
   <component name="ProjectId" id="1XACii8Zlc6zeEe3ZrgWbqeJKYA" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -17,6 +23,9 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/app.js" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/app.js">
@@ -56,6 +65,7 @@
       <updated>1580479640122</updated>
       <workItem from="1580479643241" duration="2783000" />
       <workItem from="1580482605320" duration="705000" />
+      <workItem from="1580547703866" duration="15223000" />
     </task>
     <servers />
   </component>
@@ -71,21 +81,25 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="463" y="123" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1580483193216" />
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom" timestamp="1580483309990">
+    <state width="1345" height="284" key="GridCell.Tab.0.bottom" timestamp="1580562175354">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1580483309990" />
-    <state width="1345" height="178" key="GridCell.Tab.0.center" timestamp="1580483309989">
+    <state width="1345" height="284" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1580562175354" />
+    <state width="1345" height="284" key="GridCell.Tab.0.center" timestamp="1580562175354">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1580483309989" />
-    <state width="1345" height="178" key="GridCell.Tab.0.left" timestamp="1580483309989">
+    <state width="1345" height="284" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1580562175354" />
+    <state width="1345" height="284" key="GridCell.Tab.0.left" timestamp="1580562175353">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1580483309989" />
-    <state width="1345" height="178" key="GridCell.Tab.0.right" timestamp="1580483309989">
+    <state width="1345" height="284" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1580562175353" />
+    <state width="1345" height="284" key="GridCell.Tab.0.right" timestamp="1580562175354">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1580483309989" />
+    <state width="1345" height="284" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1580562175354" />
+    <state x="186" y="10" key="SettingsEditor" timestamp="1580548215244">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="186" y="10" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1580548215244" />
   </component>
 </project>
