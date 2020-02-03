@@ -8,25 +8,26 @@ router.get("/", (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-    res.render("register");
+    res.render("register", {page: "register"});
 });
 
 router.post("/register", (req, res) => {
-    var user = new User({username: req.body.username})
+    var user = new User({username: req.body.username});
     var password = req.body.password;
     User.register(user, password, (err, newUser) => {
         if(err){
-            console.log(err);
+            req.flash("error", err.message);
             return res.render("register");
         }
         passport.authenticate("local")(req, res, () => {
+            req.flash("success", "Successfully Signed Up! Welcome to FoodFinder " + newUser.username);
             res.redirect("/restaurants")
         });
     });
 });
 
 router.get("/login", (req, res) => {
-    res.render("login");
+    res.render("login", {page: "login"});
 });
 
 router.post("/login", passport.authenticate("local", 
@@ -40,15 +41,8 @@ router.post("/login", passport.authenticate("local",
 
 router.get("/logout", (req, res) => {
     req.logout();
+    req.flash("success", "Logged You Out!");
     res.redirect("/restaurants");
 });
-
-function isLoggedIn (req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-
-    res.redirect("/login");
-}
 
 module.exports = router;
