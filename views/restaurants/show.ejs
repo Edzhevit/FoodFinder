@@ -1,6 +1,5 @@
 <%- include("../partials/header") %>
 
-<div class="container">
     <div class="row">
         <div class="col-md-3">
             <p class="lead">FoodFinder</p>
@@ -14,7 +13,7 @@
             <div class="thumbnail">
                 <img class="img-responsive" src="<%= restaurant.image%>">
                 <div class="caption">
-                    <h4 class="pull-right">Sofia</h4>
+                    <h4 class="pull-right"><%= restaurant.location%></h4>
                     <h4><a href="#"><%= restaurant.name %></a></h4>
                     <p><%= restaurant.description %></p>
                     <p>
@@ -53,6 +52,5 @@
             </div>
         </div>
     </div>
-</div>
 
 <%- include("../partials/footer") %>
