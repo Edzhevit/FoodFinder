@@ -5,6 +5,7 @@ var app = express();
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var flash = require("connect-flash");
+var moment = require("moment");
 var passport = require("passport");
 var LogalStrategy = require("passport-local");
 var methodOverride = require("method-override");
@@ -18,8 +19,8 @@ var restaurantRoutes = require("./routes/restaurants");
 var commentRoutes = require("./routes/comments");
 
 mongoose.set('useUnifiedTopology', true);
-// mongoose.set('useFindAndModify', false);
-mongoose.connect("mongodb://localhost:27017/food_finder3", {useNewUrlParser: true});
+mongoose.set('useFindAndModify', false);
+mongoose.connect("mongodb://localhost:27017/food_finder4", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
+    res.locals.moment = moment;
     next();
 });
 
