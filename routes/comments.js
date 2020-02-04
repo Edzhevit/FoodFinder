@@ -64,6 +64,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
         if (err) {
             res.redirect("back");
         } else {
+            req.flash("success", "Comment edited!");
             res.redirect("/restaurants/" + req.params.id);
         }
     });

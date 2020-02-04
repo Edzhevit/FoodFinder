@@ -48,8 +48,10 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     Restaurant.create(newRestaurant, (err, newlyCreated) => {
         if(err){
             console.log(err);
+            res.redirect("back");
         } else{
             // redirect back to restaurants
+            req.flash("success", "Restaurant created!");
             res.redirect("/restaurants");
         }
     });
@@ -84,6 +86,7 @@ router.put("/:id", middleware.checkRestaurantOwnership, (req, res) => {
         if (err){
             res.redirect("/restaurants");
         } else {
+            req.flash("success", "Restaurant edited!");
             res.redirect("/restaurants/" + req.params.id);
         }
     });
@@ -94,6 +97,7 @@ router.delete("/:id", middleware.checkRestaurantOwnership, (req, res) => {
         if (err) {
             res.redirect("/restaurants");
         } else {
+            req.flash("success", "Restaurant Deleted!");
             res.redirect("/restaurants");
         }
     })
