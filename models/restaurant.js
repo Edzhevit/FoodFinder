@@ -5,6 +5,8 @@ var restaurantSchema = new mongoose.Schema({
     image: String,
     description: String,
     location: String,
+    // lat: Number,
+    // lng: Number,
     user: {
         id: {
             type: mongoose.Schema.Types.ObjectId,

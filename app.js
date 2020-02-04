@@ -1,3 +1,5 @@
+// require("dotenv").config();
+
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -17,7 +19,7 @@ var commentRoutes = require("./routes/comments");
 
 mongoose.set('useUnifiedTopology', true);
 // mongoose.set('useFindAndModify', false);
-mongoose.connect("mongodb://localhost:27017/food_finder2", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/food_finder3", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");

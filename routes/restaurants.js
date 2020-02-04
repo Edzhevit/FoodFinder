@@ -3,14 +3,29 @@ var router = express.Router({mergeParams: true});
 var Restaurant = require("../models/restaurant");
 var middleware = require("../middleware/middleware");
 
+/* Need to create payment billing profile in google maps
+
+// var NodeGeocoder = require("node-geocoder");
+
+// var options = {
+//     provider: "google",
+//     httpAdapter: "https",
+//     apiKey: process.env.GEOCODER_API_KEY,
+//     formatter: null
+// };
+
+// var geocoder = NodeGeocoder(options);
+
+ */
+
 router.get("/", (req, res) => {
     // Get all restaurants from DB
     Restaurant.find({}, (err, allRestaurants) => {
-        if(err){
+        if (err) {
             console.log(err);
-        } else{
+        } else {
             res.render("restaurants/index",
-                { 
+                {
                     restaurants: allRestaurants,
                     page: "restaurants"
                 });
@@ -47,15 +62,15 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 router.get("/:id", (req, res) => {
     // find restaurant with provided ID
     Restaurant.findById(req.params.id).populate("comments").exec((err, foundRestaurant) => {
-        if(err || !foundRestaurant){
+        if (err || !foundRestaurant) {
             req.flash("error", "Restaurant not found!");
             res.redirect("back");
-        } else{
+        } else {
             // render show template with that restaurant
             res.render("restaurants/show", {restaurant: foundRestaurant});
         }
     });
-  
+
 });
 
 router.get("/:id/edit", middleware.checkRestaurantOwnership, (req, res) => {
@@ -76,7 +91,7 @@ router.put("/:id", middleware.checkRestaurantOwnership, (req, res) => {
 
 router.delete("/:id", middleware.checkRestaurantOwnership, (req, res) => {
     Restaurant.findByIdAndRemove(req.params.id, (err) => {
-        if(err){
+        if (err) {
             res.redirect("/restaurants");
         } else {
             res.redirect("/restaurants");
