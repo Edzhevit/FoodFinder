@@ -19,18 +19,39 @@ var middleware = require("../middleware/middleware");
  */
 
 router.get("/", (req, res) => {
-    // Get all restaurants from DB
-    Restaurant.find({}, (err, allRestaurants) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("restaurants/index",
-                {
-                    restaurants: allRestaurants,
-                    page: "restaurants"
-                });
-        }
-    });
+    var noMatch;
+    if (req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Restaurant.find({name: regex}, (err, allRestaurants) => {
+            if (err) {
+                console.log(err);
+            } else {
+                if (allRestaurants.length < 1){
+                    noMatch = "No restaurants match that query, please try again."
+                }
+                res.render("restaurants/index",
+                    {
+                        restaurants: allRestaurants,
+                        page: "restaurants",
+                        noMatch: noMatch
+                    });
+            }
+        });
+    } else {
+        // Get all restaurants from DB
+        Restaurant.find({}, (err, allRestaurants) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("restaurants/index",
+                    {
+                        restaurants: allRestaurants,
+                        page: "restaurants",
+                        noMatch: noMatch
+                    });
+            }
+        });
+    }
 });
 
 router.post("/", middleware.isLoggedIn, (req, res) => {
@@ -102,5 +123,9 @@ router.delete("/:id", middleware.checkRestaurantOwnership, (req, res) => {
         }
     })
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = router;
