@@ -1,12 +1,12 @@
 <%- include("./partials/header") %>
 
-    <div class="row">
+    <div class="row text-center">
         <div class="col-md-12">
-            <form action="/forgot" method="post">
+            <form class="form-signin" action="/forgot" method="post">
                 <legend>Forgot Password</legend>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email" class="form-control" type="email" name="email" placeholder="email" autofocus>
+                    <label for="email" class="sr-only">Email</label>
+                    <input id="email" class="form-control" type="email" name="email" placeholder="Email" autofocus>
                 </div>
                 <div class="form-group">
                     <input class="btn btn-primary" type="submit" value="Reset Password">
