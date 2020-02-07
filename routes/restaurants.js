@@ -2,6 +2,27 @@ var express = require("express");
 var router = express.Router({mergeParams: true});
 var Restaurant = require("../models/restaurant");
 var middleware = require("../middleware/middleware");
+var multer = require("multer");
+var storage = multer.diskStorage({
+    filename: function(req, file, callback) {
+        callback(null, Date.now() + file.originalname);
+    }
+});
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter});
+
+var cloudinary = require("cloudinary");
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 /* Need to create payment billing profile in google maps
 
@@ -54,27 +75,22 @@ router.get("/", (req, res) => {
     }
 });
 
-router.post("/", middleware.isLoggedIn, (req, res) => {
-    // get data from form and add to restaurants array
-    var name = req.body.name;
-    var image = req.body.image;
-    var description = req.body.description;
-    var location = req.body.location;
-    var user = {
-        id: req.user.id,
-        username: req.user.username
-    };
-    var newRestaurant = { name: name, image: image, description: description, user: user, location: location};
-    // create a new restaurant and save it to DB
-    Restaurant.create(newRestaurant, (err, newlyCreated) => {
-        if(err){
-            console.log(err);
-            res.redirect("back");
-        } else{
-            // redirect back to restaurants
-            req.flash("success", "Restaurant created!");
-            res.redirect("/restaurants");
-        }
+router.post("/", middleware.isLoggedIn, upload.single("image"), (req, res) => {
+    cloudinary.uploader.upload(req.file.path, (result) => {
+        // add cloudinary url for the image to the restaurant object under image property
+        req.body.restaurant.image = result.secure_url;
+        // add user to restaurant
+        req.body.restaurant.user = {
+            id: req.user._id,
+            username: req.user.username
+        };
+        Restaurant.create(req.body.restaurant, (err, newRestaurant) => {
+            if (err) {
+                req.flash("error", err.message);
+                return res.redirect("back");
+            }
+            res.redirect('/restaurants/' + newRestaurant.id);
+        });
     });
 });
 
@@ -126,6 +142,6 @@ router.delete("/:id", middleware.checkRestaurantOwnership, (req, res) => {
 
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
+}
 
 module.exports = router;

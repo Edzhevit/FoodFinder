@@ -1,4 +1,4 @@
-// require("dotenv").config();
+require("dotenv").config();
 
 var express = require("express");
 var app = express();
@@ -21,7 +21,7 @@ var commentRoutes = require("./routes/comments");
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect("mongodb://localhost:27017/food_finder_v1", {useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB, {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -53,6 +53,6 @@ app.use(authRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/restaurants/:id/comments", commentRoutes);
 
-app.listen("3000", () => {
+app.listen(process.env.IP, () => {
     console.log("FoodFinder server has started!")
 });
