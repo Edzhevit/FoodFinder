@@ -2,19 +2,24 @@ var express = require("express");
 var router = express.Router();
 var passport = require("passport");
 var User = require("../models/user");
-var Restaurant = require("../models/restaurant");
+var Place = require("../models/place");
+var Notification = require("../models/notification");
+var middleware = require("../middleware/middleware");
 var async = require("async");
 var nodeMailer = require("nodemailer");
 var crypto = require("crypto");
 
+// root route
 router.get("/", (req, res) => {
     res.render("landing");
 });
 
+// show registration form
 router.get("/register", (req, res) => {
     res.render("register", {page: "register"});
 });
 
+// handle sign up logic
 router.post("/register", (req, res) => {
     var user = new User(
         {
@@ -34,36 +39,42 @@ router.post("/register", (req, res) => {
             return res.render("register");
         }
         passport.authenticate("local")(req, res, () => {
-            req.flash("success", "Successfully Signed Up! Welcome to FoodFinder " + newUser.username);
-            res.redirect("/restaurants")
+            req.flash("success", "Successfully Signed Up! Welcome to PlaceFinder " + newUser.username);
+            res.redirect("/places")
         });
     });
 });
 
+// show login form
 router.get("/login", (req, res) => {
     res.render("login", {page: "login"});
 });
 
+// handle login logic
 router.post("/login", passport.authenticate("local", 
     {
-        successRedirect: "/restaurants",
+        successRedirect: "/places",
         failureRedirect: "/login"
     }), 
         (req, res) => {
     
 });
 
+// logout route
 router.get("/logout", (req, res) => {
     req.logout();
     req.flash("success", "Logged You Out!");
-    res.redirect("/restaurants");
+    res.redirect("/places");
 });
 
 // To use the forgot and reset you need to change your gmail settings so it allows less secure apps
+// get forgot password form
 router.get("/forgot", (req, res) => {
     res.render("forgot");
 });
 
+// To use the forgot and reset you need to change your gmail settings so it allows less secure apps
+// handle forgot password logic
 router.post("/forgot", (req, res, next) => {
     async.waterfall([
         function (done) {
@@ -99,7 +110,7 @@ router.post("/forgot", (req, res, next) => {
                 to: user.email,
                 // You need to put your own email here
                 from: "test@gmail.com",
-                subject: "FoodFinder password reset",
+                subject: "PlaceFinder password reset",
                 text: "You are receiving this email because you (or someone else) have requested reset of the password for your account." +
                       "Please click on the following link, or paste this into your browser to complete the process:" +
                       "http://" + req.headers.host + "/reset/" + token + "\n\n" +
@@ -118,6 +129,8 @@ router.post("/forgot", (req, res, next) => {
     });
 });
 
+// To use the forgot and reset you need to change your gmail settings so it allows less secure apps
+// get reset password form
 router.get("/reset/:token", (req, res) => {
     User.findOne({resetPasswordToken: req.params.token, resetPasswordExpires: {$gt: Date.now()}}, (err, foundUser) => {
         if (!foundUser){
@@ -128,6 +141,8 @@ router.get("/reset/:token", (req, res) => {
     });
 });
 
+// To use the forgot and reset you need to change your gmail settings so it allows less secure apps
+// handle reset password logic
 router.post("/reset/:token", (req, res) => {
     async.waterfall([
         function (done) {
@@ -175,25 +190,75 @@ router.post("/reset/:token", (req, res) => {
             });
         }
     ], (err) => {
-        res.redirect("/restaurants");
+        res.redirect("/places");
     });
 });
 
-router.get("/users/:id", (req, res) => {
-    User.findById(req.params.id, (err, foundUser) => {
-        if (err){
-            req.flash("error", "There is no such user!");
-            res.redirect("back");
-        }
-        Restaurant.find().where("user.id").equals(foundUser.id).exec((err, restaurants) => {
-            if (err){
-                req.flash("error", "There is no such user!");
-                res.redirect("back");
-            }
-            res.render("users/show", {user: foundUser, restaurants: restaurants});
-        });
+// user profile
+router.get("/users/:id", async (req, res) => {
+    try {
+        var user = await User.findById(req.params.id).populate("followers").exec();
+        res.render("profile", {user: user});
+    } catch (err) {
+        req.flash("error", err.message);
+        return res.redirect("back");
+    }
+    // User.findById(req.params.id, (err, foundUser) => {
+    //     if (err){
+    //         req.flash("error", "There is no such user!");
+    //         res.redirect("back");
+    //     }
+    //     Place.find().where("user.id").equals(foundUser.id).exec((err, places) => {
+    //         if (err){
+    //             req.flash("error", "There is no such user!");
+    //             res.redirect("back");
+    //         }
+    //         res.render("users/show", {user: foundUser, places: places});
+    //     });
+    //
+    // });
+});
 
-    });
+// follow user
+router.get("/follow/:id", middleware.isLoggedIn, async (req, res) => {
+    try {
+        var user = await User.findById(req.params.id);
+        user.followers.push(req.user._id);
+        user.save();
+        req.flash("success", "Successfully followed " + user.username + "!");
+        res.redirect("/users/" + req.params.id);
+    } catch (err) {
+        req.flash("error", err.message);
+        res.redirect("back");
+    }
+});
+
+// view all notifications
+router.get("/notifications", middleware.isLoggedIn, async (req, res) => {
+   try {
+       var user = await User.findById(req.user.id).populate({
+           path: "notifications",
+           options: {sort: {"_id": -1}}
+       }).exec();
+       var allNotifications = user.notifications;
+       res.render("notifications/index", {allNotifications: allNotifications});
+   } catch (err) {
+       req.flash("error", err.message);
+       res.redirect("back");
+   }
+});
+
+// handle notifications
+router.get("/notifications/:id", middleware.isLoggedIn, async(req, res) => {
+   try {
+       var notification = await Notification.findById(req.params.id);
+       notification.isRead = true;
+       notification.save();
+       res.redirect("/places/" + notification.placeId)
+   } catch (err) {
+       req.flash("error", err.message);
+       res.redirect("back")
+   }
 });
 
 module.exports = router;
