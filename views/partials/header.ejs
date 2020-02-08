@@ -3,22 +3,23 @@
 <head>
     <!-- Make site responsive on mobile/tablet -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FoodFinder</title>
+    <title>PlaceFinder</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/stylesheets/main.css">
+    <script src="https://kit.fontawesome.com/850b9c7b52.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-    <a class="navbar-brand" href="/">FoodFinder</a>
+    <a class="navbar-brand" href="/"><i class="fas fa-globe-europe"></i> PlaceFinder</a>
     <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#navbar"
             aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item <%= typeof page !== 'undefined' && page === 'restaurants' ? 'active' : '' %>">
-                <a class="nav-link" href="/restaurants">Home</a>
+            <li class="nav-item <%= typeof page !== 'undefined' && page === 'places' ? 'active' : '' %>">
+                <a class="nav-link" href="/places">Home</a>
             </li>
         </ul>
         <ul class="navbar-nav">
@@ -30,6 +31,24 @@
                     <a class="nav-link" href="/register">Sign Up</a>
                 </li>
             <% } else { %>
+                <div class="dropdown">
+                    <a href="#" id="dropMenu" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">
+                        Notifications <span class="badge"><%=notifications.length%></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="/notifications">View past notifications</a>
+                        </li>
+                        <% notifications.forEach(function (notification) { %>
+                        <li>
+                            <a class="dropdown-item" href="/notifications/<%=notification.id%>">
+                                    <%= notification.username%> created a new place
+                            </a>
+                        </li>
+                        <% }) %>
+                    </ul>
+                </div>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Signed In As <%= currentUser.username %></a>
                 </li>
