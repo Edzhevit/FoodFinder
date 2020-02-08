@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var Restaurant = require("./models/restaurant");
+var Place = require("./models/place");
 var Comment   = require("./models/comment");
  
 var data = [
@@ -22,14 +22,14 @@ var data = [
  
 async function seedDB(){
     try{
-        await Restaurant.deleteMany({});
-        console.log("Restaurants removed");
+        await Place.deleteMany({});
+        console.log("Places removed");
         await Comment.deleteMany({});
         console.log("Comments removed");
     
         for(var seed of data){
-            var restaurant = await Restaurant.create(seed);
-            console.log("Restaurant created");
+            var place = await Place.create(seed);
+            console.log("Place created");
             var comment = await Comment.create(
                 {
                     text: "This place is great, but I wish there was internet",
@@ -37,8 +37,8 @@ async function seedDB(){
                 }
             );
             console.log("Comment created");
-            restaurant.comments.push(comment);
-            restaurant.save();
+            place.comments.push(comment);
+            place.save();
             console.log("Comment added to campground");
         }
     } catch (err){

@@ -11,11 +11,11 @@
             </div>
         </div>
         <div class="col-md-8">
-            <h3><%=user.username%>'s restaurants:</h3>
+            <h3><%=user.username%>'s places:</h3>
             <ul>
-                <% restaurants.forEach((restaurant) => { %>
+                <% places.forEach((place) => { %>
                     <li>
-                        <a href="/restaurants/<%=restaurant.id%>"><%=restaurant.name%></a>
+                        <a href="/places/<%=place.id%>"><%=place.name%></a>
                     </li>
                 <% })%>
             </ul>

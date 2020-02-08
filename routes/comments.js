@@ -1,24 +1,24 @@
 var express = require("express");
 var router = express.Router({mergeParams: true});
-var Restaurant = require("../models/restaurant");
+var Place = require("../models/place");
 var Comment = require("../models/comment");
 var middleware = require("../middleware/middleware");
 
 router.get("/new", middleware.isLoggedIn, (req, res) => {
-    Restaurant.findById(req.params.id, (err, restaurant) => {
+    Place.findById(req.params.id, (err, place) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("comments/new", {restaurant: restaurant});
+            res.render("comments/new", {place: place});
         }
     })
 });
 
 router.post("/", middleware.isLoggedIn, (req, res) => {
-    Restaurant.findById(req.params.id, (err, restaurant) => {
+    Place.findById(req.params.id, (err, place) => {
         if (err) {
             console.log(err);
-            req.redirect("/restaurants")
+            req.redirect("/places")
         } else {
             Comment.create(req.body.comment, (err, comment) => {
                 if (err) {
@@ -28,10 +28,10 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                     comment.author.username = req.user.username;
                     comment.save();
 
-                    restaurant.comments.push(comment._id);
-                    restaurant.save();
+                    place.comments.push(comment._id);
+                    place.save();
                     req.flash("success", "Successfully added a comment!");
-                    res.redirect("/restaurants/" + restaurant._id);
+                    res.redirect("/places/" + place._id);
                 }
             })
         }
@@ -39,9 +39,9 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 });
 
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
-    Restaurant.findById(req.params.id, (err, foundRestaurant) => {
-        if (err || !foundRestaurant) {
-            req.flash("error", "Restaurant not found!");
+    Place.findById(req.params.id, (err, foundPlace) => {
+        if (err || !foundPlace) {
+            req.flash("error", "Place not found!");
             return res.redirect("back");
         }
         Comment.findById(req.params.comment_id, (err, foundComment) => {
@@ -51,7 +51,7 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => 
             } else {
                 res.render("comments/edit",
                     {
-                        restaurant_id: req.params.id,
+                        place_id: req.params.id,
                         comment: foundComment
                     });
             }
@@ -65,7 +65,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
             res.redirect("back");
         } else {
             req.flash("success", "Comment edited!");
-            res.redirect("/restaurants/" + req.params.id);
+            res.redirect("/places/" + req.params.id);
         }
     });
 });
@@ -76,7 +76,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
             res.redirect("back");
         } else {
             req.flash("success", "Comment deleted");
-            res.redirect("/restaurants/" + req.params.id);
+            res.redirect("/places/" + req.params.id);
         }
     });
 });
