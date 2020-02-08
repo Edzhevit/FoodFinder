@@ -2,8 +2,8 @@
 
     <div class="row text-center">
         <div class="col-md-12">
-            <h1 class="h3 mb-3 font-weight-normal">Add New Comment to <%=restaurant.name%></h1>
-            <form class="form-signin" action="/restaurants/<%=restaurant._id%>/comments" method="POST">
+            <h1 class="h3 mb-3 font-weight-normal">Add New Comment to <%=place.name%></h1>
+            <form class="form-signin" action="/places/<%=place._id%>/comments" method="POST">
                 <div class="form-group">
                     <label for="text" class="sr-only">Text</label>
                     <input id="text" class="form-control" type="text" name="comment[text]" placeholder="Text" required autofocus>
@@ -12,7 +12,7 @@
                     <button class="btn btn-lg btn-primary btn-block">Add Comment</button>
                 </div>
             </form>
-            <a href="/restaurants">Go Back</a>
+            <a class="btn btn-secondary" href="/places"><i class="fa fa-arrow-left"></i> Go Back</a>
         </div>
     </div>
 
