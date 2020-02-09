@@ -65,6 +65,14 @@ body{
     display: inline-block;
 }
 
+.checked {
+    color: orange;
+}
+
+.form-inline {
+    display: inline-block;
+}
+
 /*#map{*/
 /*    height: 400px;*/
 /*    width: 100%;*/
