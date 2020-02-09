@@ -1,0 +1,49 @@
+<%- include("../partials/header") %>
+
+    <header class="jumbotron text-center">
+        <div class="container">
+            <h1><i class="fas fa-globe-europe"></i> Welcome to PlaceFinder!</h1>
+            <p>View our hand-picked places from all over the world</p>
+            <p>
+                <a class="btn btn-success btn-lg" href="/places/new">Add New Place</a>
+            </p>
+
+                <form class="form-inline" action="/places" method="get">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="search" placeholder="Place Search...">
+                        <input class="btn btn-light ml-2" type="submit" value="Search">
+                    </div>
+                </form>
+
+        </div>
+    </header>
+
+    <div id="place-grid" class="row text-center">
+        <div class="col-md-12">
+            <% if (noMatch !== undefined) { %>
+                <h3><%= noMatch %></h3>
+            <% } %>
+        </div>
+        <% places.forEach(function(place){ %>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <img class="card-img-top" src="<%= place.image %>"  alt="<%= place.name %>">
+                    <div class="card-body">
+                        <h5 class="card-title"> <%= place.name %> </h5>
+                        <% if (place.rating === 0) { %>
+                            <em>No reviews yet.</em>
+                        <% } else { %>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star <% if (place.rating > 1.5) { %> checked <% } %>"></span>
+                            <span class="fa fa-star <% if (place.rating > 2.5) { %> checked <% } %>"></span>
+                            <span class="fa fa-star <% if (place.rating > 3.5) { %> checked <% } %>"></span>
+                            <span class="fa fa-star <% if (place.rating > 4.5) { %> checked <% } %>"></span>
+                        <% } %>
+                    </div>
+                    <a href="/places/<%= place.id %>" class="btn btn-info">More Info</a>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+<%- include("../partials/footer") %>
