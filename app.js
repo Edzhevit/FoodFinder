@@ -10,13 +10,14 @@ var passport = require("passport");
 var LogalStrategy = require("passport-local");
 var methodOverride = require("method-override");
 var expressSession = require("express-session");
-var Restaurant = require("./models/restaurant");
+var Place = require("./models/place");
 var Comment = require("./models/comment");
 var User = require("./models/user");
 var seedDb = require("./seeds");
 var authRoutes = require("./routes/index");
-var restaurantRoutes = require("./routes/restaurants");
+var placeRoutes = require("./routes/places");
 var commentRoutes = require("./routes/comments");
+var reviewRoutes = require("./routes/reviews");
 
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
@@ -41,8 +42,16 @@ passport.use(new LogalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     res.locals.currentUser = req.user;
+    if (req.user){
+        try {
+            var user = await User.findById(req.user._id).populate("notifications", null, {isRead: false}).exec();
+            res.locals.notifications = user.notifications.reverse();
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
     res.locals.moment = moment;
@@ -50,9 +59,10 @@ app.use((req, res, next) => {
 });
 
 app.use(authRoutes);
-app.use("/restaurants", restaurantRoutes);
-app.use("/restaurants/:id/comments", commentRoutes);
+app.use("/places", placeRoutes);
+app.use("/places/:id/comments", commentRoutes);
+app.use("/places/:id/reviews", reviewRoutes);
 
 app.listen(process.env.IP, () => {
-    console.log("FoodFinder server has started!")
+    console.log("PlaceFinder server has started!")
 });
