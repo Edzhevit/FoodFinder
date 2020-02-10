@@ -23,11 +23,15 @@ var commentRoutes = require("./routes/comments");
 var reviewRoutes = require("./routes/reviews");
 
 // config mongoose
-mongoose.set('useUnifiedTopology', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
+mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.DBURL, {useNewUrlParser: true})
+mongoose.connect(process.env.DBURL,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true
+    })
     .then(()=>console.log("DB server connect"))
     .catch(e => console.log("DB error", e));
 
