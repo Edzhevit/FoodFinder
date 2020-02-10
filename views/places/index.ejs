@@ -39,6 +39,9 @@
                             <span class="fa fa-star <% if (place.rating > 3.5) { %> checked <% } %>"></span>
                             <span class="fa fa-star <% if (place.rating > 4.5) { %> checked <% } %>"></span>
                         <% } %>
+                        <div>
+                            <span class="badge label-primary"><i class="fas fa-thumbs-up"></i> <%= place.likes.length %></span>
+                        </div>
                     </div>
                     <a href="/places/<%= place.slug %>" class="btn btn-info">More Info</a>
                 </div>
