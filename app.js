@@ -26,7 +26,7 @@ var reviewRoutes = require("./routes/reviews");
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect(process.env.MONGODB, {useNewUrlParser: true});
+mongoose.connect(process.env.DBURL, {useNewUrlParser: true});
 
 // config libraries
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -69,6 +69,6 @@ app.use("/places/:slug/comments", commentRoutes);
 app.use("/places/:slug/reviews", reviewRoutes);
 
 // config port to listen
-app.listen(process.env.IP, () => {
+app.listen(process.env.PORT, () => {
     console.log("PlaceFinder server has started!")
 });
