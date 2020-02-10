@@ -40,37 +40,43 @@ var placeSchema = new mongoose.Schema({
     slug: {
         type: String,
         unique: true
-    }
+    },
+    likes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 });
 
 // add a slug before the place gets saved to the DB
 placeSchema.pre("save", async function (next) {
-   try {
-       // check if new place is being saved, or if place is being modified
-       if (this.isNew || this.isModified("name")){
-           this.slug = await generateUniqueSlug(this.id, this.name);
-       }
-       next();
-   } catch (err) {
-       next(err);
-   }
+    try {
+        // check if new place is being saved, or if place is being modified
+        if (this.isNew || this.isModified("name")) {
+            this.slug = await generateUniqueSlug(this.id, this.name);
+        }
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
 var Place = mongoose.model("Place", placeSchema);
 
 module.exports = Place;
 
-async function generateUniqueSlug (id, placeName, slug) {
+async function generateUniqueSlug(id, placeName, slug) {
     try {
         // generate initial slug
-        if (!slug){
+        if (!slug) {
             slug = slugify(placeName);
         }
 
         // check if place with that slug already exists
         var place = await Place.findOne({slug: slug});
         // check if the place is found or if the found place is the current place
-        if (!place || place.id.equal(id)){
+        if (!place || place.id.equal(id)) {
             return slug;
         }
 
