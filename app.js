@@ -23,16 +23,10 @@ var commentRoutes = require("./routes/comments");
 var reviewRoutes = require("./routes/reviews");
 
 // config mongoose
-mongoose.set("useUnifiedTopology", true);
-mongoose.set("useFindAndModify", false);
-mongoose.connect("mongodb+srv://edzhevit:" + process.env.PASSWORD + "@placefinder-jgu5n.mongodb.net/test?retryWrites=true&w=majority",
-    {useNewUrlParser: true,
-    useCreateIndex: true})
-    .then(() => {
-        console.log("Connected to DB!")
-    }).catch(err => {
-        console.log("ERROR: " + err.message);
-});
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.connect(process.env.DBURL, {useNewUrlParser: true});
 
 // config libraries
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,6 +69,6 @@ app.use("/places/:slug/comments", commentRoutes);
 app.use("/places/:slug/reviews", reviewRoutes);
 
 // config port to listen
-app.listen(process.env.PORT, function () {
+app.listen(process.env.PORT, () => {
     console.log("PlaceFinder server has started!")
 });
