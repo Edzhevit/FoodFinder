@@ -1,5 +1,5 @@
+// require libraries
 require("dotenv").config();
-
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -10,27 +10,30 @@ var passport = require("passport");
 var LogalStrategy = require("passport-local");
 var methodOverride = require("method-override");
 var expressSession = require("express-session");
+
+// require models
 var Place = require("./models/place");
 var Comment = require("./models/comment");
 var User = require("./models/user");
-var seedDb = require("./seeds");
+
+// require routes
 var authRoutes = require("./routes/index");
 var placeRoutes = require("./routes/places");
 var commentRoutes = require("./routes/comments");
 var reviewRoutes = require("./routes/reviews");
 
+// config mongoose
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.connect(process.env.MONGODB, {useNewUrlParser: true});
 
+// config libraries
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
-// seedDb();
-
 app.use(expressSession({
     secret: "Favourite place is Sofia!",
     resave: false,
@@ -42,6 +45,7 @@ passport.use(new LogalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// add to all routes
 app.use(async (req, res, next) => {
     res.locals.currentUser = req.user;
     if (req.user){
@@ -58,11 +62,13 @@ app.use(async (req, res, next) => {
     next();
 });
 
+// refactor all routes
 app.use(authRoutes);
 app.use("/places", placeRoutes);
-app.use("/places/:id/comments", commentRoutes);
-app.use("/places/:id/reviews", reviewRoutes);
+app.use("/places/:slug/comments", commentRoutes);
+app.use("/places/:slug/reviews", reviewRoutes);
 
+// config port to listen
 app.listen(process.env.IP, () => {
     console.log("PlaceFinder server has started!")
 });

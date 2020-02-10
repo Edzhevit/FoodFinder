@@ -4,8 +4,9 @@ var Place = require("../models/place");
 var Comment = require("../models/comment");
 var middleware = require("../middleware/middleware");
 
+// show new comment form
 router.get("/new", middleware.isLoggedIn, (req, res) => {
-    Place.findById(req.params.id, (err, place) => {
+    Place.findOne({slug: req.params.slug}, (err, place) => {
         if (err) {
             console.log(err);
         } else {
@@ -14,8 +15,9 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
     })
 });
 
+// create a new comment
 router.post("/", middleware.isLoggedIn, (req, res) => {
-    Place.findById(req.params.id, (err, place) => {
+    Place.findOne({slug: req.params.slug}, (err, place) => {
         if (err) {
             console.log(err);
             req.redirect("/places")
@@ -28,10 +30,10 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                     comment.author.username = req.user.username;
                     comment.save();
 
-                    place.comments.push(comment._id);
+                    place.comments.push(comment);
                     place.save();
                     req.flash("success", "Successfully added a comment!");
-                    res.redirect("/places/" + place._id);
+                    res.redirect("/places/" + place.slug);
                 }
             })
         }
@@ -39,7 +41,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 });
 
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
-    Place.findById(req.params.id, (err, foundPlace) => {
+    Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
         if (err || !foundPlace) {
             req.flash("error", "Place not found!");
             return res.redirect("back");
@@ -51,7 +53,7 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => 
             } else {
                 res.render("comments/edit",
                     {
-                        place_id: req.params.id,
+                        place_slug: req.params.slug,
                         comment: foundComment
                     });
             }
@@ -65,7 +67,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
             res.redirect("back");
         } else {
             req.flash("success", "Comment edited!");
-            res.redirect("/places/" + req.params.id);
+            res.redirect("/places/" + req.params.slug);
         }
     });
 });
@@ -76,7 +78,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
             res.redirect("back");
         } else {
             req.flash("success", "Comment deleted");
-            res.redirect("/places/" + req.params.id);
+            res.redirect("/places/" + req.params.slug);
         }
     });
 });

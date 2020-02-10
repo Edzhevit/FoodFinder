@@ -98,26 +98,18 @@ router.post("/", middleware.isLoggedIn, upload.single("image"), async (req, res)
             var user = await User.findById(req.user.id).populate("followers").exec();
             var newNotification = {
                 username: req.user.username,
-                placeId: place.id
+                placeId: place.slug
             };
             for (var follower of user.followers) {
                 var notification = await Notification.create(newNotification);
                 follower.notifications.push(notification);
                 follower.save();
             }
-            res.redirect("/places/" + place.id);
+            res.redirect("/places/" + place.slug);
         } catch (err) {
             req.flash("error", err.message);
             res.redirect("back");
         }
-
-        // Place.create(req.body.place, (err, newPlace) => {
-        //     if (err) {
-        //         req.flash("error", err.message);
-        //         return res.redirect("back");
-        //     }
-        //     res.redirect("/places/" + newPlace.id);
-        // });
     });
 });
 
@@ -127,9 +119,9 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 });
 
 // show more info about one place
-router.get("/:id", (req, res) => {
+router.get("/:slug", (req, res) => {
     // find place with provided ID
-    Place.findById(req.params.id).populate("comments").populate({
+    Place.findOne({slug: req.params.slug}).populate("comments").populate({
         path: "reviews",
         options: {sort: {createdAt: -1}}
     }).exec((err, foundPlace) => {
@@ -145,28 +137,29 @@ router.get("/:id", (req, res) => {
 });
 
 // show edit form for a place
-router.get("/:id/edit", middleware.checkPlaceOwnership, (req, res) => {
-    Place.findById(req.params.id, (err, foundPlace) => {
+router.get("/:slug/edit", middleware.checkPlaceOwnership, (req, res) => {
+    Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
         res.render("places/edit", {place: foundPlace});
     });
 });
 
 // update a place
-router.put("/:id", middleware.checkPlaceOwnership, (req, res) => {
+router.put("/:slug", middleware.checkPlaceOwnership, (req, res) => {
     delete req.body.place.rating;
-    Place.findByIdAndUpdate(req.params.id, req.body.place, (err, updatedPlace) => {
+    // find and update the correct place
+    Place.findOneAndUpdate({slug: req.params.slug}, req.body.place, (err, foundPlace) => {
         if (err) {
             res.redirect("/places");
         } else {
             req.flash("success", "Place edited!");
-            res.redirect("/places/" + req.params.id);
+            res.redirect("/places/" + foundPlace.slug);
         }
     });
 });
 
 // delete a place
-router.delete("/:id", middleware.checkPlaceOwnership, (req, res) => {
-    Place.findById(req.params.id, (err, foundPlace) => {
+router.delete("/:slug", middleware.checkPlaceOwnership, (req, res) => {
+    Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
         if (err) {
             res.redirect("/places");
         } else {

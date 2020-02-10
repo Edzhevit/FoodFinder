@@ -5,7 +5,7 @@ var Review = require("../models/review");
 
 middlewareObj.checkPlaceOwnership = (req, res, next) => {
     if (req.isAuthenticated()) {
-        Place.findById(req.params.id, (err, foundPlace) => {
+        Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
             if (err || !foundPlace) {
                 req.flash("error", "Place not found!");
                 res.redirect("back");
@@ -76,7 +76,7 @@ middlewareObj.checkReviewOwnership = (req, res, next) => {
 
 middlewareObj.checkReviewExistence = (req, res, next) => {
     if (req.isAuthenticated()) {
-        Place.findById(req.params.id).populate("reviews").exec((err, foundPlace) => {
+        Place.findOne({slug: req.params.slug}).populate("reviews").exec((err, foundPlace) => {
             if (err || !foundPlace) {
                 req.flash("error", "Place not found.");
                 res.redirect("back");

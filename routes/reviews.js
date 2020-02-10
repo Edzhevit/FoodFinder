@@ -6,7 +6,7 @@ var middleware = require("../middleware/middleware");
 
 // Reviews Index
 router.get("/",  (req, res) => {
-    Place.findById(req.params.id).populate({
+    Place.findOne({slug: req.params.slug}).populate({
         path: "reviews",
         options: {sort: {createdAt: -1}} // sorting the populated reviews array to show the latest first
     }).exec(function (err, place) {
@@ -21,7 +21,7 @@ router.get("/",  (req, res) => {
 // Reviews New
 router.get("/new", middleware.isLoggedIn, middleware.checkReviewExistence, (req, res) => {
     // middleware.checkReviewExistence checks if a user already reviewed the place, only one review per user is allowed
-    Place.findById(req.params.id, (err, foundPlace) => {
+    Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
         if (err) {
             req.flash("error", err.message);
             return res.redirect("back");
@@ -33,7 +33,7 @@ router.get("/new", middleware.isLoggedIn, middleware.checkReviewExistence, (req,
 // Reviews Create
 router.post("/", middleware.isLoggedIn, middleware.checkReviewExistence, (req, res) => {
     //lookup place using ID
-    Place.findById(req.params.id).populate("reviews").exec((err, foundPlace) => {
+    Place.findOne({slug: req.params.slug}).populate("reviews").exec((err, foundPlace) => {
         if (err) {
             req.flash("error", err.message);
             return res.redirect("back");
@@ -55,7 +55,7 @@ router.post("/", middleware.isLoggedIn, middleware.checkReviewExistence, (req, r
             //save place
             foundPlace.save();
             req.flash("success", "Your review has been successfully added.");
-            res.redirect('/places/' + foundPlace._id);
+            res.redirect('/places/' + foundPlace.slug);
         });
     });
 });
@@ -67,7 +67,7 @@ router.get("/:review_id/edit", middleware.checkReviewOwnership, (req, res) => {
             req.flash("error", err.message);
             return res.redirect("back");
         }
-        res.render("reviews/edit", {place_id: req.params.id, review: foundReview});
+        res.render("reviews/edit", {place_slug: req.params.slug, review: foundReview});
     });
 });
 
@@ -78,7 +78,7 @@ router.put("/:review_id", middleware.checkReviewOwnership, (req, res) => {
             req.flash("error", err.message);
             return res.redirect("back");
         }
-        Place.findById(req.params.id).populate("reviews").exec((err, foundPlace) => {
+        Place.findOne({slug: req.params.slug}).populate("reviews").exec((err, foundPlace) => {
             if (err) {
                 req.flash("error", err.message);
                 return res.redirect("back");
@@ -88,7 +88,7 @@ router.put("/:review_id", middleware.checkReviewOwnership, (req, res) => {
             //save changes
             foundPlace.save();
             req.flash("success", "Your review was successfully edited.");
-            res.redirect('/places/' + foundPlace._id);
+            res.redirect('/places/' + foundPlace.slug);
         });
     });
 });
@@ -100,8 +100,8 @@ router.delete("/:review_id", middleware.checkReviewOwnership, (req, res) => {
             req.flash("error", err.message);
             return res.redirect("back");
         }
-        Place.findByIdAndUpdate(req.params.id, {$pull: {reviews: req.params.review_id}}, {new: true}).populate("reviews")
-            .exec((err, campground) => {
+        Place.findOneAndUpdate({slug: req.params.slug}, {$pull: {reviews: req.params.review_id}}, {new: true}).populate("reviews")
+            .exec((err, place) => {
             if (err) {
                 req.flash("error", err.message);
                 return res.redirect("back");
@@ -111,7 +111,7 @@ router.delete("/:review_id", middleware.checkReviewOwnership, (req, res) => {
             //save changes
             place.save();
             req.flash("success", "Your review was deleted successfully.");
-            res.redirect("/places/" + req.params.id);
+            res.redirect("/places/" + req.params.slug);
         });
     });
 });
