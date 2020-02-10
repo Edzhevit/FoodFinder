@@ -40,7 +40,7 @@
                             <span class="fa fa-star <% if (place.rating > 4.5) { %> checked <% } %>"></span>
                         <% } %>
                     </div>
-                    <a href="/places/<%= place.id %>" class="btn btn-info">More Info</a>
+                    <a href="/places/<%= place.slug %>" class="btn btn-info">More Info</a>
                 </div>
             </div>
         <% }); %>

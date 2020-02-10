@@ -3,7 +3,7 @@
     <div class="row text-center">
         <div class="col-md-12">
             <h1 class="h3 mb-3 font-weight-normal">Add New Comment to <%=place.name%></h1>
-            <form class="form-signin" action="/places/<%=place._id%>/comments" method="POST">
+            <form class="form-signin" action="/places/<%=place.slug%>/comments" method="POST">
                 <div class="form-group">
                     <label for="text" class="sr-only">Text</label>
                     <input id="text" class="form-control" type="text" name="comment[text]" placeholder="Text" required autofocus>

@@ -37,8 +37,8 @@
                                     </p>
                                     <% if(currentUser && review.author.id.equals(currentUser._id)){ %>
                                     <a class="btn btn-sm btn-warning"
-                                       href="/places/<%=place._id %>/reviews/<%=review._id %>/edit">Edit</a>
-                                    <form class="deleteForm" action="/places/<%=place._id %>/reviews/<%=review._id %>?_method=DELETE" method="POST">
+                                       href="/places/<%=place.slug %>/reviews/<%=review._id %>/edit">Edit</a>
+                                    <form class="deleteForm" action="/places/<%=place.slug %>/reviews/<%=review._id %>?_method=DELETE" method="POST">
                                         <input type="submit" class="btn btn-sm btn-danger" value="Delete">
                                     </form>
                                     <% } %>
@@ -48,10 +48,10 @@
                         <% }); %>
                     <% } %>
                     <div>
-                        <a class="btn btn-success mb-1 <% if (currentUser && place.reviews.some(function (review) {return review.author.id.equals(currentUser._id)})) { %> disabled <% } %>" href="/places/<%= place._id %>/reviews/new">
+                        <a class="btn btn-success mb-1 <% if (currentUser && place.reviews.some(function (review) {return review.author.id.equals(currentUser._id)})) { %> disabled <% } %>" href="/places/<%= place.slug %>/reviews/new">
                             Write a New Review</a>
                     </div>
-                        <a class="btn btn-secondary" href="/places/<%= place._id %>"><i class="fa fa-arrow-left"></i> Go Back</a>
+                        <a class="btn btn-secondary" href="/places/<%= place.slug %>"><i class="fa fa-arrow-left"></i> Go Back</a>
                 </div>
             </div>
         </div>
