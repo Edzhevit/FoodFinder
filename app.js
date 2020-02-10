@@ -26,7 +26,10 @@ var reviewRoutes = require("./routes/reviews");
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect(process.env.DBURL, {useNewUrlParser: true});
+
+mongoose.connect(process.env.DBURL, {useNewUrlParser: true})
+    .then(()=>console.log("DB server connect"))
+    .catch(e => console.log("DB error", e));
 
 // config libraries
 app.use(bodyParser.urlencoded({ extended: true }));
