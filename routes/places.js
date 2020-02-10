@@ -121,7 +121,7 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 // show more info about one place
 router.get("/:slug", (req, res) => {
     // find place with provided ID
-    Place.findOne({slug: req.params.slug}).populate("comments").populate({
+    Place.findOne({slug: req.params.slug}).populate("comments").populate("likes").populate({
         path: "reviews",
         options: {sort: {createdAt: -1}}
     }).exec((err, foundPlace) => {
@@ -134,6 +134,34 @@ router.get("/:slug", (req, res) => {
         }
     });
 
+});
+
+// add or remove like
+router.post("/:slug/like", middleware.isLoggedIn, (req, res) => {
+    Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
+        if (err){
+            req.flash("error", "No place with that id exists.");
+            res.redirect("back");
+        }
+        // check if req.user._id exists in foundCampground.likes
+        var foundUserLike = foundPlace.likes.some((like) => {
+            return like.equals(req.user.id);
+        });
+
+        if (foundUserLike){
+            // user already liked, removing like
+            foundPlace.likes.pull(req.user.id);
+        } else {
+            foundPlace.likes.push(req.user);
+        }
+
+        foundPlace.save(function (err) {
+            if (err){
+                req.flash("error", "Something went wrong.")
+            }
+            return res.redirect("/places/" + foundPlace.slug);
+        })
+    })
 });
 
 // show edit form for a place

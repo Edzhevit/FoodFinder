@@ -40,6 +40,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     })
 });
 
+// show edit comment form
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
     Place.findOne({slug: req.params.slug}, (err, foundPlace) => {
         if (err || !foundPlace) {
@@ -61,6 +62,7 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => 
     });
 });
 
+// edit a comment
 router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, updatedComment) => {
         if (err) {
@@ -72,6 +74,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
     });
 });
 
+// delete a comment
 router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
     Comment.findByIdAndRemove(req.params.comment_id, (err) => {
         if (err) {
