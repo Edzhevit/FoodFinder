@@ -3,10 +3,10 @@
 #### PlaceFinder is a web applicatoin for searching restaurants, bars, clubs etc. It has feauters for adding your own places, adding comments to places, following users and much more.
 
 ### Index page
-![home](https://res.cloudinary.com/edzhevit/image/upload/v1580129635/medident_xw59sd.bmp)
+![home](https://res.cloudinary.com/edzhevit/image/upload/v1582891716/HomePlaceFinder_ffui0r.png)
 
 ### Home page
-![home](https://res.cloudinary.com/edzhevit/image/upload/v1580130043/medident_home_hgoqg0.png)
+![home](https://res.cloudinary.com/edzhevit/image/upload/v1582891590/HomePage_qfkc9t.png)
 
 #### The application is implemented using NodeJS.
 * Used Express
@@ -15,6 +15,7 @@
 
 #### Used WebStorm IDE
 * Used ejs template engine for generating the UI.
+
 **Used partials for header and footer.**
 
 #### Used MongoDB as a database.
