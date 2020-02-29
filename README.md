@@ -8,6 +8,10 @@
 ### Home page
 ![home](https://res.cloudinary.com/edzhevit/image/upload/v1582891590/HomePage_qfkc9t.png)
 
+### More Info Page
+![home](https://res.cloudinary.com/edzhevit/image/upload/v1582964067/MoreInfo_bz4on7.png)
+![home](https://res.cloudinary.com/edzhevit/image/upload/v1582964078/ReviewAndComment_q29mqh.png)
+
 #### The application is implemented using NodeJS.
 * Used Express
 * The application has 17 web pages (views).
